@@ -39,7 +39,6 @@ def main():
     X_train[numerical_cols] = scaler.fit_transform(X_train[numerical_cols]) 
     X_test[numerical_cols] = scaler.transform(X_test[numerical_cols])
 
-    best_entropy = None
     best_accuracy = 0
     best_params = None
 
@@ -60,7 +59,6 @@ def main():
         
         if grid_search.best_score_ > best_accuracy:
             best_accuracy = grid_search.best_score_
-            best_entropy = criterion
             best_params = grid_search.best_params_
 
     print("Best Hyperparameters:", best_params)
