@@ -1,9 +1,10 @@
-from flask import Flask, render_template, request, redirect, url_for
+from flask import Flask, render_template, request, redirect, url_for, session
 import pandas as pd
 import pickle
 import os
 
 app = Flask(__name__)
+app.secret_key = 'stroke'  
 
 loaded_model = pickle.load(open('model.pkl', 'rb'))
 
@@ -34,6 +35,10 @@ def predict():
         }
 
         data_to_predict_df = pd.DataFrame([data_to_predict])
+
+        
+        session['original_data'] = data_to_predict_df.to_dict(orient='records')
+
         data_to_predict_df['gender'] = data_to_predict_df['gender'].map(gender_mapping)
         data_to_predict_df['ever_married'] = data_to_predict_df['ever_married'].map(ever_married_mapping)
         data_to_predict_df['work_type'] = data_to_predict_df['work_type'].map(work_type_mapping)
@@ -41,17 +46,43 @@ def predict():
         data_to_predict_df['smoking_status'] = data_to_predict_df['smoking_status'].map(smoking_status_mapping)
 
         prediction = loaded_model.predict(data_to_predict_df)
-        
-        data_to_predict_df.to_csv('newdata.csv', mode='a', header=not os.path.exists('newdata.csv'), index=False)
+        session['data_to_predict_df'] = data_to_predict_df.to_dict(orient='records')
+        session['prediction'] = int(prediction[0])
 
         return render_template('index.html', prediction_text=f'Prediction: {prediction[0]}')
     except Exception as e:
         return render_template('index.html', prediction_text=f'Error: {str(e)}')
 
+
+
 @app.route('/update_data', methods=['POST'])
 def update_data():
     try:
-        prediction_value = request.form['prediction']
+        user_input = request.form.get('prediction')
+
+        if user_input not in ['True', 'False']:
+            raise ValueError('Invalid user input.')
+
+        original_data = pd.DataFrame(session.pop('original_data', None))
+        prediction = session.pop('prediction', None)
+
+        if original_data is None or prediction is None:
+            raise ValueError('Data or prediction not found in session.')
+        
+        if prediction == 0 and user_input == 'True':
+            original_data['stroke'] = 0
+        elif prediction == 0 and user_input == 'False':
+            original_data['stroke'] = 1
+        elif prediction == 1 and user_input == 'True':
+            original_data['stroke'] = 1
+        elif prediction == 1 and user_input == 'False':
+            original_data['stroke'] = 0
+
+        columns_order = ['gender', 'age', 'hypertension', 'heart_disease', 'ever_married', 'work_type',
+                         'Residence_type', 'avg_glucose_level', 'bmi', 'smoking_status', 'stroke']
+        original_data = original_data[columns_order]
+
+        original_data.to_csv('newdata.csv', mode='a', header=not os.path.exists('newdata.csv'), index=False)
 
         return redirect(url_for('home'))
     except Exception as e:

@@ -85,7 +85,6 @@
             <div class="mb-3">
                 <label for="smoking_status" class="form-label">Smoking Status</label>
                 <select class="form-select" id="smoking_status" name="smoking_status" required>
-                    <option value="Unknown" selected disabled>Select Smoking Status</option>
                     <option value="never smoked">Non-Smoker</option>
                     <option value="formerly smoked">Ex-Smoker</option>
                     <option value="smokes">Current Smoker</option>
@@ -99,11 +98,13 @@
         {% if prediction_text is defined %}
         <div class="mt-4">
             <h4>Prediction Result:</h4>
+        
             {% if prediction_text == 'Prediction: 0' %}
             <p>Low risk of having stroke / No stroke</p>
             {% elif prediction_text == 'Prediction: 1' %}
             <p>High risk of having stroke / Stroke</p>
             {% endif %}
+            <p>Raw Prediction Value: {{ prediction_text }}</p>
 
             <form method="post" action="/update_data">
                 <input type="hidden" name="prediction" value="True">

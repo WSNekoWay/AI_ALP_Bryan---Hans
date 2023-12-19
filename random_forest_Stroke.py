@@ -14,6 +14,8 @@ df = df[df['gender'] != 'Other']
 
 median_bmi = df['bmi'].median()
 df['bmi'].fillna(median_bmi, inplace=True)
+mode_smoking_status = df['smoking_status'].mode()[0]
+df['smoking_status'].replace('Unknown', mode_smoking_status, inplace=True)
 df.dropna(inplace=True)
 label_encoder = LabelEncoder()
 
