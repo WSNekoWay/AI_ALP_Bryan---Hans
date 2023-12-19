@@ -104,8 +104,7 @@
             {% elif prediction_text == 'Prediction: 1' %}
             <p>High risk of having stroke / Stroke</p>
             {% endif %}
-            <p>Raw Prediction Value: {{ prediction_text }}</p>
-
+            
             <form method="post" action="/update_data">
                 <input type="hidden" name="prediction" value="True">
                 <button type="submit" class="btn btn-success">True</button>
