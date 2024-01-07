@@ -1,126 +1,257 @@
 <!DOCTYPE html>
 <html lang="en">
+  <head>
+    <title>Contact Form 07</title>
+    <meta charset="utf-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1, shrink-to-fit=no"
+    />
 
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Stroke Prediction</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet"
-        integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnqz7hXlYRxnFO3Zl+O9sAuFgblJ/p2D" crossorigin="anonymous">
-</head>
+    <link
+      href="https://fonts.googleapis.com/css?family=Roboto:400,100,300,700"
+      rel="stylesheet"
+      type="text/css"
+    />
+    <link
+      rel="stylesheet"
+      href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css"
+    />
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='../static/css/style.css') }}"
+    />
 
-<body>
-
-    <div class="container mt-5">
-        <h2 class="mb-4">Stroke Prediction</h2>
-
-        <form method="post" action="/predict">
-            <div class="mb-3">
-                <label for="gender" class="form-label">Gender</label>
-                <select class="form-select" id="gender" name="gender" required>
-                    <option value="Male">Male</option>
-                    <option value="Female">Female</option>
-                </select>
-            </div>
-
-            <div class="mb-3">
-                <label for="age" class="form-label">Age</label>
-                <input type="number" class="form-control" id="age" name="age" required>
-            </div>
-
-            <div class="mb-3">
-                <label for="hypertension" class="form-label">Hypertension</label>
-                <select class="form-select" id="hypertension" name="hypertension" required>
-                    <option value="0">No</option>
-                    <option value="1">Yes</option>
-                </select>
-            </div>
-
-            <div class="mb-3">
-                <label for="heart_disease" class="form-label">Heart Disease</label>
-                <select class="form-select" id="heart_disease" name="heart_disease" required>
-                    <option value="0">No</option>
-                    <option value="1">Yes</option>
-                </select>
-            </div>
-
-            <div class="mb-3">
-                <label for="ever_married" class="form-label">Ever Married</label>
-                <select class="form-select" id="ever_married" name="ever_married" required>
-                    <option value="No">No</option>
-                    <option value="Yes">Yes</option>
-                </select>
-            </div>
-
-            <div class="mb-3">
-                <label for="work_type" class="form-label">Work Type</label>
-                <select class="form-select" id="work_type" name="work_type" required>
-                    <option value="Private">Private</option>
-                    <option value="Self-employed">Self-Employed</option>
-                    <option value="Govt_job">Government Job</option>
-                    <option value="children">Children</option>
-                    <option value="Never_worked">Never Worked</option>
-                </select>
-            </div>
-
-            <div class="mb-3">
-                <label for="Residence_type" class="form-label">Residence Type</label>
-                <select class="form-select" id="Residence_type" name="Residence_type" required>
-                    <option value="Urban">Urban</option>
-                    <option value="Rural">Rural</option>
-                </select>
-            </div>
-
-            <div class="mb-3">
-                <label for="avg_glucose_level" class="form-label">Average Glucose Level</label>
-                <input type="number" step="0.01" pattern="^\d*(\.\d{0,2})?$" class="form-control" id="avg_glucose_level" name="avg_glucose_level"
-                    required>
-            </div>
-
-            <div class="mb-3">
-                <label for="bmi" class="form-label">BMI</label>
-                <input type="number" step="0.1" class="form-control" id="bmi" name="bmi" required>
-            </div>
-
-            <div class="mb-3">
-                <label for="smoking_status" class="form-label">Smoking Status</label>
-                <select class="form-select" id="smoking_status" name="smoking_status" required>
-                    <option value="never smoked">Non-Smoker</option>
-                    <option value="formerly smoked">Ex-Smoker</option>
-                    <option value="smokes">Current Smoker</option>
-                </select>
-            </div>
-            
-
-            <button type="submit" class="btn btn-primary">Predict</button>
-        </form>
-
-        {% if prediction_text is defined %}
-        <div class="mt-4">
-            <h4>Prediction Result:</h4>
-        
-            {% if prediction_text == 'Prediction: 0' %}
-            <p>Low risk of having stroke / No stroke</p>
-            {% elif prediction_text == 'Prediction: 1' %}
-            <p>High risk of having stroke / Stroke</p>
-            {% endif %}
-            
-            <form method="post" action="/update_data">
-                <input type="hidden" name="prediction" value="True">
-                <button type="submit" class="btn btn-success">True</button>
-            </form>
-
-            <form method="post" action="/update_data">
-                <input type="hidden" name="prediction" value="False">
-                <button type="submit" class="btn btn-danger">False</button>
-            </form>
+    <style>
+      .contact-wrap,
+      .info-wrap {
+        margin: 0;
+        padding: 0;
+      }
+    </style>
+  </head>
+  <body>
+    <section class="ftco-section">
+      <div class="container">
+        <div class="row justify-content-center">
+          <div class="col-md-6 text-center mb-5">
+            <h2 class="heading-section">Machine Learning</h2>
+          </div>
         </div>
-        {% endif %}
+        <div class="row justify-content-center">
+          <div class="col-lg-10">
+            <div class="wrapper">
+              <form
+                method="POST"
+                id="contactForm"
+                name="contactForm"
+                class="contactForm"
+                action="/predict"
+              >
+                <div class="row">
+                  <div class="col-md-6 p-0 d-flex align-items-stretch">
+                    <div class="contact-wrap w-100 p-md-5 p-4 py-5">
+                      <h3 class="mb-4">Stroke Prediction</h3>
+                      <div class="form-group">
+                        <label for="gender" class="form-label text-white"
+                          >Gender:
+                        </label>
+                        <select
+                          class="form-select rounded-pill"
+                          id="gender"
+                          name="gender"
+                          required
+                        >
+                          <option value="Male">Male</option>
+                          <option value="Female">Female</option>
+                        </select>
+                      </div>
+                      <div class="form-group">
+                        <label for="age" class="form-label text-white"
+                          >Age:
+                        </label>
+                        <input
+                          type="number"
+                          class="form-control form-control-sm"
+                          id="age"
+                          name="age"
+                          required
+                        />
+                      </div>
+                      <div class="form-group">
+                        <label for="hypertension" class="form-label text-white"
+                          >Hypertension:
+                        </label>
+                        <select
+                          class="form-select rounded-pill"
+                          id="hypertension"
+                          name="hypertension"
+                          required
+                        >
+                          <option value="0">No</option>
+                          <option value="1">Yes</option>
+                        </select>
+                      </div>
+                      <div class="form-group">
+                        <label for="heart_disease" class="form-label text-white"
+                          >Heart Disease:
+                        </label>
+                        <select
+                          class="form-select rounded-pill"
+                          id="heart_disease"
+                          name="heart_disease"
+                          required
+                        >
+                          <option value="0">No</option>
+                          <option value="1">Yes</option>
+                        </select>
+                      </div>
+                      <div class="form-group">
+                        <button type="submit" class="btn btn-primary">Predict</button>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="col-md-6 p-0 d-flex align-items-stretch">
+                    <div class="contact-wrap w-100 p-md-5 p-4 py-5">
+                      <div class="dbox w-100 d-flex align-items-start">
+                        <div class="form-group">
+                          <label
+                            for="smoking_status"
+                            class="form-label text-white"
+                            >Smoking Status:
+                          </label>
+                          <select
+                            class="form-select rounded-pill"
+                            id="smoking_status"
+                            name="smoking_status"
+                            required
+                          >
+                            <option value="never smoked">Non-Smoker</option>
+                            <option value="formerly smoked">Ex-Smoker</option>
+                            <option value="smokes">Current Smoker</option>
+                          </select>
+                        </div>
+                      </div>
+                      <div class="dbox w-100 d-flex align-items-center">
+                        <div class="form-group">
+                          <label
+                            for="ever_married"
+                            class="form-label text-white"
+                            >Ever Married:
+                          </label>
+                          <select
+                            class="form-select rounded-pill"
+                            id="ever_married"
+                            name="ever_married"
+                            required
+                          >
+                            <option value="No">No</option>
+                            <option value="Yes">Yes</option>
+                          </select>
+                        </div>
+                      </div>
+                      <div class="dbox w-100 d-flex align-items-center">
+                        <div class="form-group">
+                          <label for="work_type" class="form-label text-white"
+                            >Work Type:
+                          </label>
+                          <select
+                            class="form-select rounded-pill"
+                            id="work_type"
+                            name="work_type"
+                            required
+                          >
+                            <option value="Private">Private</option>
+                            <option value="Self-employed">Self-Employed</option>
+                            <option value="Govt_job">Government Job</option>
+                            <option value="children">Children</option>
+                            <option value="Never_worked">Never Worked</option>
+                          </select>
+                        </div>
+                      </div>
+                      <div class="dbox w-100 d-flex align-items-center">
+                        <div class="form-group">
+                          <label
+                            for="Residence_type"
+                            class="form-label text-white"
+                            >Residence Type:
+                          </label>
+                          <select
+                            class="form-select rounded-pill"
+                            id="Residence_type"
+                            name="Residence_type"
+                            required
+                          >
+                            <option value="Urban">Urban</option>
+                            <option value="Rural">Rural</option>
+                          </select>
+                        </div>
+                      </div>
+                      <div class="form-group">
+                        <label
+                          for="avg_glucose_level"
+                          class="form-label text-white"
+                          >Average Glucose Level:
+                        </label>
+                        <input
+                          type="number"
+                          step="0.01"
+                          pattern="^\d*(\.\d{0,2})?$"
+                          class="form-control form-control-sm"
+                          id="avg_glucose_level"
+                          name="avg_glucose_level"
+                          required
+                        />
+                      </div>
+                      <div class="form-group">
+                        <label for="bmi" class="form-label text-white"
+                          >BMI:
+                        </label>
+                        <input
+                          type="number"
+                          step="0.1"
+                          class="form-control form-control-sm"
+                          id="bmi"
+                          name="bmi"
+                          required
+                        />
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </form>
+            </div>
 
-    </div>
+            {% if prediction_text is defined %}
+              <div class="mt-4">
+                <h4>Prediction Result:</h4>
 
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"
-        integrity="sha384-rZyo1aU6I1hL5rEtYzzLJGVaDxPiQq3iBqDl6L5dIwockvouq+DmM4dPypI" crossorigin="anonymous"></script>
-</body>
+                {% if prediction_text == 'Prediction: 0' %}
+                <p>Low risk of having stroke / No stroke</p>
+                {% elif prediction_text == 'Prediction: 1' %}
+                <p>High risk of having stroke / Stroke</p>
+                {% endif %}
 
+                <form method="post" action="/update_data">
+                  <input type="hidden" name="prediction" value="True" />
+                  <button type="submit" class="btn btn-success">True</button>
+                </form>
+
+                <form method="post" action="/update_data">
+                  <input type="hidden" name="prediction" value="False" />
+                  <button type="submit" class="btn btn-danger">False</button>
+                </form>
+              </div>
+              {% endif %}
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <script src="js/jquery.min.js"></script>
+    <script src="js/popper.js"></script>
+    <script src="js/bootstrap.min.js"></script>
+    <script src="js/jquery.validate.min.js"></script>
+    <script src="js/main.js"></script>
+  </body>
 </html>
