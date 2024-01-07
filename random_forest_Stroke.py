@@ -4,6 +4,7 @@ from sklearn.ensemble import RandomForestClassifier
 from sklearn.preprocessing import StandardScaler, LabelEncoder
 from sklearn.impute import KNNImputer
 from imblearn.over_sampling import SMOTE
+import numpy as np
 import warnings
 import pickle
 
@@ -34,7 +35,8 @@ Q1 = df[numerical_cols].quantile(0.25)
 Q3 = df[numerical_cols].quantile(0.75)
 IQR = Q3 - Q1
 
-df = df[~((df[numerical_cols] < (Q1 - 1.5 * IQR)) | (df[numerical_cols] > (Q3 + 1.5 * IQR))).any(axis=1)]
+outliers = ((df[numerical_cols] < (Q1 - 1.5 * IQR)) | (df[numerical_cols] > (Q3 + 1.5 * IQR)))
+df[numerical_cols] = np.where(outliers, df[numerical_cols].median(), df[numerical_cols])
 
 X = df.drop(['id', 'stroke'], axis=1)
 y = df['stroke']
