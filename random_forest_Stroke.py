@@ -41,14 +41,20 @@ df[numerical_cols] = np.where(outliers, df[numerical_cols].median(), df[numerica
 X = df.drop(['id', 'stroke'], axis=1)
 y = df['stroke']
 
-X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+# X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
 
-scaler = StandardScaler()
-X_train[numerical_cols] = scaler.fit_transform(X_train[numerical_cols])
-X_test[numerical_cols] = scaler.transform(X_test[numerical_cols])
+# scaler = StandardScaler()
+# X_train[numerical_cols] = scaler.fit_transform(X_train[numerical_cols])
+# X_test[numerical_cols] = scaler.transform(X_test[numerical_cols])
 
 smote  = SMOTE(random_state=42)
-X_train, y_train = smote.fit_resample(X_train, y_train)
+X_smt, y_smt = smote.fit_resample(X, y)
+
+X_train_smt, X_test_smt, y_train_smt, y_test_smt = train_test_split(X_smt, y_smt, test_size=0.3, random_state=42)
+
+scaler = StandardScaler()
+X_train_smt[numerical_cols] = scaler.fit_transform(X_train_smt[numerical_cols])
+X_test_smt[numerical_cols] = scaler.transform(X_test_smt[numerical_cols])
 
 best_params = None
 
@@ -63,12 +69,12 @@ param_grid = {
 model = RandomForestClassifier(random_state=42)
 grid_search = GridSearchCV(estimator=model, param_grid=param_grid, scoring='f1_weighted', cv=10, n_jobs=-1)
 
-grid_search.fit(X_train, y_train)
+grid_search.fit(X_train_smt, y_train_smt)
 
 best_params = grid_search.best_params_
 
 final_model = RandomForestClassifier(n_estimators=best_params['n_estimators'], max_depth=best_params['max_depth'], min_samples_split=best_params['min_samples_split'], criterion=best_params['criterion'], class_weight=best_params['class_weight'], random_state=42)
-final_model.fit(X_train, y_train)
+final_model.fit(X_train_smt, y_train_smt)
 
 with open('model.pkl', 'wb') as model_file:
     pickle.dump(final_model, model_file)
